@@ -1,33 +1,37 @@
-function startClassification()
+prediction1="";
+prediction2="";
+
+Webcam.set({
+    width:350,
+    height:300,
+    image_format: 'png',
+    png_quality:90
+});
+
+camera = document.getElementById("camera");
+
+Webcam.attach( '#camera' );
+
+function take_snapshot()
 {
-    navigator.mediaDevices.getUserMedia({ audio: true});
-    classifier = ml5.soundClassifier('https://teachablemachine.withgoogle.com/models/cD9FRoYSy/model.json', modelReady);
+    Webcam.snap(function(data_uri){
+        document.getElementById("result").innerHTML = '<img id="captured_image" src="'+data_uri+'"/>';
+    })
+}
+console.log('ml5 version', ml5.version);
+
+classifier = ml5.imageClassifier('https://teachablemachine.withgoogle.com/models/KE0XFxytV/model.json',modelLoaded);
+
+function modelLoaded()
+{
+    console.log('Model Loaded!');
 }
 
-function modelReady()
+function speak()
 {
-    classifier.classify(gotResults);
-}
-
-function gotResults(error , results)
-{
-    console.log("Got it now Continew");
-
-if (error) {
-    console.error(error)
-} else {
-    console.log(results);
-    random_number_r = Math.floor(Math.random() * 255) + 1;
-    random_number_g = Math.floor(Math.random() * 255) + 1;
-    random_number_b = Math.floor(Math.random() * 255) + 1;
-    
-    document.getElementById("result_label").innerHTML = 'I can hear - '+
-    results[0].label;
-    document.getElementById("result_confidence").innerHTML = 'Accuracy - '+
-    (results[0].confidence*100).toFixed(2)+" %";
-    document.getElementById("result_label").style.color = "rgb("
-    +random_number_r+","+random_number_g+","+random_number_b+")";
-    document.getElementById("result_confidence").style.color = "rgb("
-    +random_number_r+","+random_number_g+","+random_number_b+")";
-   }
+    var synth = window.speechSynthesis;
+    speak_data_1 = "The first prediction is " + prediction1;
+    speak_data_2 = "And the second predicition is " + prediction_2;
+    var utterThis = new SpeechSynthesisUtterance(speak_data_1 + speak_data_2);
+    synth.speak(utterThis);
 }
